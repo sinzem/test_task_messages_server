@@ -79,10 +79,10 @@ export class UsersController {
         return this.usersService.addPhoto(req, file);        
     }
 
-    @Roles(["USER", "ADMIN"])
-    @UseGuards(RolesGuard)
-    @Put("/photo")
-    deletePhoto(@Req() req: Request) {
-        return this.usersService.deletePhoto(req);        
-    }
+    // @Roles(["USER", "ADMIN"])
+    // @UseGuards(RolesGuard)
+    // @Put("/photo")
+    // deletePhoto(@Req() req: Request) {
+    //     return this.usersService.deletePhoto(req);        
+    // }
 }

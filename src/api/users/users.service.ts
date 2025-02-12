@@ -21,6 +21,7 @@ import { IGetUsers, IUserToClient } from 'src/types/types/usersTypes';
 import { JwtService } from '@nestjs/jwt';
 import { IPayloadFromToken } from 'src/types/types/authTypes';
 import { FilesService } from 'src/api/files/files.service';
+import { sanitizeEmail } from "src/services/sanitizer/sanitizer";
 
 @Injectable()
 export class UsersService {
@@ -31,6 +32,10 @@ export class UsersService {
     ) {}
 
     async createUser(dto: CreateUserDto, activation?: string, query?: string): Promise<UserDocument> {
+        const checkedEmail = sanitizeEmail(dto.email);
+        if (!checkedEmail) {
+            throw new BadRequestException({message: "Email address is not valid"});
+        }
         const user = await this.userModel.findOne({email: dto.email});
         if (user) {
             throw new ConflictException({message: 'The email is already taken'});
@@ -60,6 +65,10 @@ export class UsersService {
 
     async updateUser(dto: UpdateUserDto, req: Request): Promise<{user: IUserToClient}> {
         const payload = await this.getPayload(req);
+        const checkedEmail = sanitizeEmail(dto.email);
+        if (!checkedEmail) {
+            throw new BadRequestException({message: "Email address is not valid"});
+        }
         const checkUser = await this.userModel.findOne({email: dto.email});
         if (checkUser && String(checkUser._id) !== payload.id) {
             throw new ConflictException({message: 'The email is already taken'});

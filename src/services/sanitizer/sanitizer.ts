@@ -32,8 +32,19 @@ export function sanitizeText(str: string): string {
 
 export function sanitizeId(id: string): string {
     if (typeof id !== 'string' || id === null) {
-        throw new BadRequestException({message: "This should be a string"});
+        throw new BadRequestException({message: "ID should be a string"});
     };
 
     return id.replace(/[^a-z0-9\-]/ig, "").trim();
 }
+
+export function sanitizeEmail(email: string): boolean {
+    if (typeof email !== 'string' || email === null) {
+        throw new BadRequestException({message: "Email should be a string"});
+    };
+
+    const emailPrepared = email.trim();
+    const reg = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/;
+    return reg.test(emailPrepared);
+}
+

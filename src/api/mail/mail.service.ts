@@ -29,11 +29,11 @@ export class MailService {
     }
 
     // async sendActivationMail(to, link) { 
-    //     await this.transporter.sendMail({ /* (отправляем с помощью sendMail) */
-    //         from: process.env.SMTP_USER, /* (от кого) */
+    //     await this.transporter.sendMail({
+    //         from: process.env.SMTP_USER, 
     //         to, /* (кому) */
-    //         subject: 'Активация аккаунта на ' + process.env.API_URL, /* (тема, добавляем имя сайта) */
-    //         text: '', /* (вместо сообщения идет ссылка ниже) */
+    //         subject: 'Активация аккаунта на ' + process.env.API_URL, 
+    //         text: '', 
     //         html: 
     //             `
     //             <div>

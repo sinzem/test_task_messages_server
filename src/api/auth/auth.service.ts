@@ -20,6 +20,7 @@ import { UsersService } from 'src/api/users/users.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { IPayloadFromToken } from 'src/types/types/authTypes';
 import { IUserToClient } from 'src/types/types/usersTypes';
+import { sanitizeEmail } from 'src/services/sanitizer/sanitizer';
 
 @Injectable()
 export class AuthService {
@@ -84,6 +85,10 @@ export class AuthService {
     }
 
     async login(dto: LoginAuthDto, res: Response): Promise<{message?: string, user?: IUserToClient}> {
+        const checkedEmail = sanitizeEmail(dto.email);
+        if (!checkedEmail) {
+            throw new BadRequestException({message: "Email address is not valid"});
+        }
         let userFromDB = await this.usersService.getUserByEmail(dto.email); 
         if (!userFromDB) {
             throw new NotFoundException({message: "User not found at this email address"});
