@@ -27,15 +27,15 @@ export class MessagesService {
     async addMessage(
         req: Request, 
         dto: CreateMessageDto, 
-        image?: Express.Multer.File,
+        imageFile?: Express.Multer.File,
         textFile?: Express.Multer.File
     ): Promise<{createdMessage: MessageDocument}>  {
         const payload = await this.usersService.getPayload(req);
         const userById = await this.usersService.getUserById(payload.id);
         const text = sanitizeText(dto.text);
         let imagePath: string | null = null;
-        if (image && image.size < 10000000) {
-            imagePath = await this.filesService.createFile(image, "images");
+        if (imageFile && imageFile.size < 10000000) {
+            imagePath = await this.filesService.createFile(imageFile, "images");
         }
         let textFilePath: string | null = null; 
         if (textFile && textFile.size < 100000) {

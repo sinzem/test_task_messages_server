@@ -10,7 +10,7 @@ export class CreateMessageDto {
     readonly text: string;
 
     // @IsString({message: "This should be a string"}) 
-    readonly parentMessageId?: string;
+    readonly parentMessageId: string | null;
 
     // readonly image?: File;
 
