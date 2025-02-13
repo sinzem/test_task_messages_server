@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Post, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Request } from 'express';
 
 import { MessagesService } from './messages.service';
@@ -38,5 +38,12 @@ export class MessagesController {
         @Req() req: Request
     ) {
         return this.messagesService.deleteMessage(id, req);
+    }
+
+    // @Roles(["USER", "ADMIN"])
+    // @UseGuards(RolesGuard)
+    @Get()
+    getMessages(@Req() req: Request) {
+        return this.messagesService.getMessages(req.query);
     }
 }

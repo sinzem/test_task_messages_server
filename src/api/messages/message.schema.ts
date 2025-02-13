@@ -5,11 +5,17 @@ export type MessageDocument = HydratedDocument<Message>;
 
 @Schema()
 export class Message {
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  ownerId: Types.ObjectId;
+  @Prop({ required: true, type: String })
+  authId: string;
 
   @Prop({ default: null, type: String })
-  ownerPhoto: string;
+  authPhoto: string;
+
+  @Prop({ default: null, type: String })
+  authName: string;
+
+  @Prop({ default: null, type: String })
+  authEmail: string;
 
   @Prop({ default: "message", type: String })
   role: "message" | "comment";
@@ -23,8 +29,8 @@ export class Message {
   @Prop({ default: null, type: String })
   textFile: string;
 
-  @Prop({ default: null, type: Types.ObjectId })
-  parentMessageId: Types.ObjectId;
+  @Prop({ default: null, type: String })
+  parentMessageId: string;
   
   @Prop({ default: [], type: [String] })
   comments: string[];

@@ -31,7 +31,7 @@ export class RolesGuard implements CanActivate {
     try {
         user = await this.jwtService.verifyAsync(token, {secret: process.env.ACC_TOKEN});
     } catch (e) {
-        throw new UnauthorizedException({message: "Invalid token"});
+        throw new UnauthorizedException({message: "Invalid token. Login to your account"});
     }
 
     // const checkUser = await this.usersService.getUserByEmail(user.email);

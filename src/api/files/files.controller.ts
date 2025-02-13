@@ -45,12 +45,15 @@ export class FilesController {
         @Param('filename') filename: string, 
         @Res() res: Response
     ) {
-        const filePath = join(__dirname, "..", "..", "..", "static", "txt", filename);
+        const filePath = join(__dirname, "..", "..", "..", "static", "text", filename);
         if (!fs.existsSync(filePath)) {
             throw new NotFoundException({message: "File is not found"});
         }
-
-        res.sendFile(filePath);
+        res.sendFile(filePath, {
+            headers: {
+                "Content-Type": "text/plain; Windows-1251"
+            }
+        });
     }
 
 }

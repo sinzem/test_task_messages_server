@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { BadRequestException, Injectable, InternalServerErrorException, NotAcceptableException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Request } from 'express';
@@ -43,8 +43,10 @@ export class MessagesService {
         }
         try {
             const createMessage =  await new this.messageModel({
-                ownerId: userById._id,
-                ownerPhoto: userById.photo,
+                authId: String(userById._id),
+                authPhoto: userById.photo,
+                authName: userById.name,
+                authEmail: userById.email,
                 role: dto.role,
                 text,
                 image: imagePath,
@@ -52,7 +54,7 @@ export class MessagesService {
                 parentMessageId: dto.parentMessageId
             }).save();
             if (dto.parentMessageId) {
-                await this.messageModel.updateOne({_id: dto.parentMessageId}, { $push: { comments: createMessage._id }});
+                await this.messageModel.updateOne({_id: dto.parentMessageId}, { $push: { comments: String(createMessage._id )}});
             }
             // await this.userModel.updateOne({_id: userById._id}, {$push: { messages: createMessage._id }});
             return {createdMessage: createMessage};
@@ -68,7 +70,7 @@ export class MessagesService {
         if (!getMessageFromDb) {
             throw new BadRequestException({message: "Message not found"});
         }
-        if (String(getMessageFromDb.ownerId) !== payload.id) {
+        if (String(getMessageFromDb.authId) !== payload.id) {
             throw new NotAcceptableException("You cannot delete other people's messages");
         }
         let currentMessagesId = [getMessageFromDb.id];  
@@ -111,12 +113,15 @@ export class MessagesService {
         return {message: "Message successfully deleted"};
     }
 
-    async getMessages() {
-
-    }
-
-    async getComments() {
-        
+    async getMessages(query: Record<string, any>): Promise<{messages: MessageDocument[]}> {
+        const limit = query.lim ? +(query.lim) : 0;
+        const offset = query.of ? +(query.of) : 0;
+        // const total = await this.messageModel.countDocuments();
+        const messages = await this.messageModel.find().skip(offset).limit(limit);
+        if (!messages || messages.length === 0) {
+            throw new NotFoundException("Messages not found");
+        }
+        return {messages};
     }
 }
 
