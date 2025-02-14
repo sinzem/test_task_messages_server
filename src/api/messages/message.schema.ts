@@ -35,7 +35,7 @@ export class Message {
   @Prop({ default: [], type: [String] })
   comments: string[];
 
-  @Prop({ default: Date.now(), type: Date })
+  @Prop({ type: Date })
   createdAt: Date;
 }
 

@@ -6,17 +6,18 @@ import { MessagesService } from './messages.service';
 import { Message, MessageSchema } from './message.schema';
 import { UsersModule } from '../users/users.module';
 import { FilesModule } from 'src/api/files/files.module';
+import { MessagesGateway } from './messages.gateway';
 // import { User, UserSchema } from '../users/user.schema';
 
 @Module({
   controllers: [MessagesController],
-  providers: [MessagesService],
+  providers: [MessagesService, MessagesGateway],
   imports: [
     MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema}]),
     // MongooseModule.forFeature([{ name: User.name, schema: UserSchema}]),
     UsersModule,
     FilesModule
   ],
-  exports: [MessagesService]
+  exports: [MessagesService, MessagesGateway]
 })
 export class MessagesModule {}

@@ -11,6 +11,7 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { FilesService } from 'src/api/files/files.service';
 import { UsersService } from '../users/users.service';
 import { sanitizeId, sanitizeText } from 'src/services/sanitizer/sanitizer';
+import { MessagesGateway } from './messages.gateway';
 // import { User } from '../users/user.schema';
 
 
@@ -21,7 +22,8 @@ export class MessagesService {
         @InjectModel(Message.name) private messageModel: Model<Message>,
         // @InjectModel(User.name) private userModel: Model<User>,
         private filesService: FilesService,
-        private usersService: UsersService
+        private usersService: UsersService,
+        private messagesGateway: MessagesGateway
     ) {}
 
     async addMessage(
@@ -51,12 +53,14 @@ export class MessagesService {
                 text,
                 image: imagePath,
                 textFile: textFilePath,
-                parentMessageId: dto.parentMessageId
+                parentMessageId: dto.parentMessageId,
+                createdAt: Date.now()
             }).save();
             if (dto.parentMessageId) {
                 await this.messageModel.updateOne({_id: dto.parentMessageId}, { $push: { comments: String(createMessage._id )}});
             }
             // await this.userModel.updateOne({_id: userById._id}, {$push: { messages: createMessage._id }});
+            this.messagesGateway.server.emit("message", createMessage);
             return {createdMessage: createMessage};
         } catch {
             throw new InternalServerErrorException({message: "Error creating message"});
@@ -117,7 +121,7 @@ export class MessagesService {
         const limit = query.lim ? +(query.lim) : 0;
         const offset = query.of ? +(query.of) : 0;
         // const total = await this.messageModel.countDocuments();
-        const messages = await this.messageModel.find().skip(offset).limit(limit);
+        const messages = await this.messageModel.find({role: "message"}).sort({createdAt: -1}).skip(offset).limit(limit);
         if (!messages || messages.length === 0) {
             throw new NotFoundException("Messages not found");
         }
