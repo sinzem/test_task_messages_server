@@ -37,11 +37,11 @@ export class MessagesService {
         const text = sanitizeText(dto.text);
         let imagePath: string | null = null;
         if (imageFile && imageFile.size < 10000000) {
-            imagePath = await this.filesService.createFile(imageFile, "images");
+            imagePath = await this.filesService.createFile({file: imageFile, type: "images"});
         }
         let textFilePath: string | null = null; 
         if (textFile && textFile.size < 100000) {
-            textFilePath = await this.filesService.createFile(textFile, "text");
+            textFilePath = await this.filesService.createFile({file: textFile, type: "text"});
         }
         try {
             const createMessage =  await new this.messageModel({
@@ -114,6 +114,7 @@ export class MessagesService {
         } catch {
             throw new InternalServerErrorException({message: "Error when deleting messages"});
         }
+        this.messagesGateway.server.emit("delete", id);
         return {message: "Message successfully deleted"};
     }
 
