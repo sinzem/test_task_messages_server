@@ -5,21 +5,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 @Injectable()
 export class FilesService {
-
-    // async createFile(file: Express.Multer.File, type: "photo" | "images" | "text"): Promise<string> {
-    //     try {
-    //         const resolution = file.originalname.split(".");
-    //         const fileName = uuidv4() + `.${resolution.at(-1)}`; 
-    //         const filePath = path.resolve(__dirname, "..", "..", "..", "static", type); 
-    //         if (!fs.existsSync(filePath)) {
-    //             fs.mkdirSync(filePath, {recursive: true}); 
-    //         }
-    //         fs.writeFileSync(path.join(filePath, fileName), file.buffer);
-    //         return fileName;
-    //     } catch (e) {
-    //         throw new InternalServerErrorException({message: "An error occurred while writing the file"});
-    //     }
-    // }
+    
     async createFile({
         file,
         type,
@@ -53,13 +39,4 @@ export class FilesService {
         }
     }
 }
-// if (userFromDb.photo) {
-//     const filePath = path.resolve(__dirname, "..", "..", "..", "static", "photo", userFromDb.photo);
-//     if (fs.existsSync(filePath)) {
-//         fs.rmSync(filePath);
-//     }
-// }
-// let a = [1, 2, 3, 4]
-// let b = a.slice(0, a.length - 1)
 
-// console.log(b);

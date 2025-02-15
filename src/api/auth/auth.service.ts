@@ -38,16 +38,6 @@ export class AuthService {
         activationLink = activationLink.replace(/./, saveData);
         let userFromDB = await this.usersService.createUser(dto, activationLink, query);
         const link = `${process.env.SERVER_URL}/api/auth/confirmation/${activationLink}`;
-        // const payload = {id: userFromDB._id, email: userFromDB.email, role: userFromDB.role};
-        // const durability = dto.saveData ? `${process.env.REF_EXPIRE}` : `${process.env.ACC_EXPIRE}`;
-        // const refreshToken = this.generateRefreshToken(payload, durability);
-        // await this.userModel.updateOne({_id: userFromDB._id}, {refreshToken});
-        // res.cookie('refreshToken', refreshToken, {
-        //     httpOnly: true,
-        //     secure: Boolean(process.env.COOKIE_SECURE),
-        //     sameSite: 'strict',
-        //     maxAge: 15 * 24 * 60 * 60 * 1000,
-        // });
         this.mailService.sendMessage({
             to: userFromDB.email,
             from: String(process.env.MAIL_SENDER),

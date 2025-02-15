@@ -169,29 +169,6 @@ export class UsersService {
         }
     }
 
-    // async addPhoto (req: Request, file: Express.Multer.File): Promise<{user: IUserToClient}> {
-    //     const payload = await this.getPayload(req);
-    //     const fileName = await this.fileService.createFile(file, "photo");
-    //     if (file && file.size > 10000000) {
-    //         throw new ConflictException({message: "Image size is too large"})
-    //     }
-    //     try {
-    //         const userFromDb = await this.getUserById(payload.id);
-    //         if (userFromDb.photo) {
-    //             const filePath = path.resolve(__dirname, "..", "..", "..", "static", "photo", userFromDb.photo);
-    //             if (fs.existsSync(filePath)) {
-    //                 fs.rmSync(filePath);
-    //             }
-    //         }
-    //         await this.userModel.updateOne({_id: payload.id}, {photo: fileName});
-    //         const user = this.userToClient(userFromDb);
-    //         user.photo = fileName;
-    //         return {user};
-    //     } catch (e) {
-    //         throw new InternalServerErrorException("Error updating user data");
-    //     }
-    // }
-
     async deletePhoto (req: Request): Promise<{user: IUserToClient}> {
         const payload = await this.getPayload(req);
         const userFromDb = await this.getUserById(payload.id);

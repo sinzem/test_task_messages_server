@@ -87,26 +87,30 @@ export class MessagesService {
             if (message && message.comments.length) {
                 currentMessagesId = [...currentMessagesId, ...message.comments];
                 allMessageIds = [...allMessageIds, ...message.comments];
-                if (message.image) {
-                    allImagePaths.push(message.image);
-                }
-                if (message.text) {
-                    allTexstsPaths.push(message.text);
-                }
+            }
+            if (message && message.image) {
+                allImagePaths.push(message.image);
+            }
+            if (message && message.textFile) {
+                allTexstsPaths.push(message.textFile);
             }
         } 
         while (allTexstsPaths.length) {
             const currentText = allTexstsPaths.pop();
             if (currentText) {
-                const filePath = path.resolve(__dirname, "..", "..", 'static', "text", currentText);
-                if (fs.existsSync(filePath)) fs.rmSync(filePath);
+                const filePath = path.resolve(__dirname, "..", "..", "..", 'static', "text", currentText);
+                if (fs.existsSync(filePath)) {
+                    fs.rmSync(filePath);
+                };
             }
         }
         while (allImagePaths.length) {
             const currentImage = allImagePaths.pop();
             if (currentImage) {
-                const filePath = path.resolve(__dirname, "..", "..", 'static', "images", currentImage);
-                if (fs.existsSync(filePath)) fs.rmSync(filePath);
+                const filePath = path.resolve(__dirname, "..", "..", "..", 'static', "images", currentImage);
+                if (fs.existsSync(filePath)) {
+                    fs.rmSync(filePath);
+                };
             }
         }
         try {
