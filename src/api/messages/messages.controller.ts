@@ -46,4 +46,11 @@ export class MessagesController {
     getMessages(@Req() req: Request) {
         return this.messagesService.getMessages(req.query);
     }
+
+    // @Roles(["USER", "ADMIN"])
+    // @UseGuards(RolesGuard)
+    @Get("/comments/:id")
+    getComments(@Param("id") id: string) {
+        return this.messagesService.getComments(id);
+    }
 }

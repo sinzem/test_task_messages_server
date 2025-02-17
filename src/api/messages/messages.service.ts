@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { BadRequestException, Injectable, InternalServerErrorException, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Request } from 'express';
+import e, { Request } from 'express';
 import * as fs from "fs";
 import * as path from 'path';
 
@@ -10,7 +10,7 @@ import { Message, MessageDocument } from './message.schema';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { FilesService } from 'src/api/files/files.service';
 import { UsersService } from '../users/users.service';
-import { sanitizeId, sanitizeText } from 'src/services/sanitizer/sanitizer';
+import { sanitizeEmail, sanitizeId, sanitizeText } from 'src/services/sanitizer/sanitizer';
 import { MessagesGateway } from './messages.gateway';
 // import { User } from '../users/user.schema';
 
@@ -77,6 +77,9 @@ export class MessagesService {
         if (String(getMessageFromDb.authId) !== payload.id) {
             throw new NotAcceptableException("You cannot delete other people's messages");
         }
+        if (getMessageFromDb.parentMessageId) {
+            await this.messageModel.updateOne({ _id: getMessageFromDb.parentMessageId }, {$pull: {comments: id}});
+        }
         let currentMessagesId = [getMessageFromDb.id];  
         let allMessageIds: string[] = [getMessageFromDb.id];
         let allImagePaths: string[] = [];
@@ -122,15 +125,106 @@ export class MessagesService {
         return {message: "Message successfully deleted"};
     }
 
+    async getComments(id: string): Promise<{comments: MessageDocument[]}> {
+        const checkedId = sanitizeId(id);
+        const getMessageFromDb = await this.messageModel.findById(checkedId);
+        if (!getMessageFromDb) {
+            throw new BadRequestException({message: "Message not found"});
+        }
+        if (!getMessageFromDb.comments || !getMessageFromDb.comments.length) {
+            throw new BadRequestException({message: "No comments found for this message"});
+        }
+        try {
+            const comments = await this.messageModel.find({ _id: { $in: getMessageFromDb.comments } });
+            return {comments};
+        } catch {
+            throw new InternalServerErrorException({message: "An error occurred while retrieving comments"});
+        }
+    }
+
+    
     async getMessages(query: Record<string, any>): Promise<{messages: MessageDocument[]}> {
-        const limit = query.lim ? +(query.lim) : 0;
-        const offset = query.of ? +(query.of) : 0;
-        // const total = await this.messageModel.countDocuments();
-        const messages = await this.messageModel.find({role: "message"}).sort({createdAt: -1}).skip(offset).limit(limit);
+        
+        let limit = 25;
+        if (query.lim && Number.isInteger(Number(query.lim)) && Number(query.lim) > 0) {
+            limit = query.lim;
+        }
+
+        let ofset = 0;
+        if (query.of && Number.isInteger(Number(query.of)) && Number(query.of) >= 0) {
+            ofset = query.of;
+        }
+
+        let direction;
+        if (query.dir && (query.dir === "1" || query.dir === "-1")) {
+            direction = +(query.dir);
+        } else {
+            direction = -1;
+        }
+
+        let entityValue;
+        let startDate;
+        let endDate;
+        if (query.en && query.enval && query.en === "name") {
+            entityValue = query.enval.trim().replace(/[^@()а-яёъa-z0-9_\'\:\;\- ]/ig, "");
+        } else if (query.en && query.enval && query.en === "email") {
+            const checkEmail = sanitizeEmail(query.enval);
+            if (checkEmail) {
+                entityValue = query.enval; 
+            } else {
+                throw new BadRequestException({message: "Bad request: invalid email address"})
+            }
+        } else if (query.en && query.enval && query.en === "date") {
+            const checkDate = query.enval.trim().split(".");
+            if (checkDate.length === 3 
+                && checkDate[0].length === 2
+                && checkDate[1].length === 2
+                && checkDate[2].length === 2
+                && (+checkDate[0] > 0 && +checkDate[0] < 32)
+                && (+checkDate[1] > 0 && +checkDate[1] < 13)
+                && (+checkDate[2] >= 0 && +checkDate[2] < 100)
+            ) {
+                startDate = new Date(`20${checkDate[2]}-${checkDate[1]}-${checkDate[0]}T00:00:00.000Z`);
+                endDate = new Date(`20${checkDate[2]}-${checkDate[1]}-${checkDate[0]}T23:59:59.999Z`);
+            } else {
+                throw new BadRequestException({message: "Bad request: invalid date"})
+            }
+        } else if (query.en && query.enval) {
+            throw new BadRequestException({message: "Bad Request: invalid search query"});
+        }
+        
+        let messages;
+        if (query.en === "date") {
+            messages = await this.messageModel.find({role: "message", createdAt: { $gte: startDate, $lt: endDate}})
+                                                .sort({createdAt: direction})
+                                                .skip(ofset)
+                                                .limit(limit);
+        } else if (query.en === "name") {
+            messages = await this.messageModel.find({role: "message", authName: entityValue})
+                                                .sort({createdAt: direction})
+                                                .skip(ofset)
+                                                .limit(limit);
+        } else if (query.en === "email") {
+            messages = await this.messageModel.find({role: "message", authEmail: entityValue})
+                                                .sort({createdAt: direction})
+                                                .skip(ofset)
+                                                .limit(limit); 
+        } else if (!query.en && !query.enval) {
+            messages = await this.messageModel.find({role: "message"})
+                                                .sort({createdAt: direction})
+                                                .skip(ofset)
+                                                .limit(limit);
+        } else {
+            throw new BadRequestException({message: "Bad Request: search query error"});
+        }
+
         if (!messages || messages.length === 0) {
             throw new NotFoundException("Messages not found");
         }
+
+        // const total = await this.messageModel.countDocuments();
         return {messages};
     }
 }
+
 

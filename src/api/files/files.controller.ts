@@ -51,7 +51,7 @@ export class FilesController {
         }
         res.sendFile(filePath, {
             headers: {
-                "Content-Type": "text/plain; Windows-1251"
+                "Content-Type": "text/plain; charset=Windows-1251"
             }
         });
     }
