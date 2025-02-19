@@ -9,7 +9,7 @@ import { corsConfig } from './configs/cors.config';
 
 async function bootstrap() {
 
-  const PORT = process.env.PORT || 7000;
+  const PORT = process.env.PORT || 5500;
 
   const app = await NestFactory.create(AppModule);
 

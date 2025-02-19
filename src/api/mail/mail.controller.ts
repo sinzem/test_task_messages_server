@@ -4,12 +4,12 @@ import { MailService } from './mail.service';
 import { ValidationPipe } from 'src/services/pipes/validation.pipe';
 import { FeedbackDto } from './dto/feedback-service.dto';
 
-@Controller('mail')
+@Controller('api/mail')
 export class MailController {
 
     constructor(private mailService: MailService) {}
  
-    @Post("api/feedback") 
+    @Post("/feedback") 
     @UsePipes(ValidationPipe)
     create(@Body() dto: FeedbackDto) { 
         const toAdmin = {

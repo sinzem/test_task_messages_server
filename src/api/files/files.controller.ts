@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import { Roles } from 'src/api/auth/roles-auth.decorator';
 import { RolesGuard } from 'src/api/auth/roles-guard';
 
-@Controller('files')
+@Controller('api/files')
 export class FilesController {
 
     // @Roles(["USER", "ADMIN"])
