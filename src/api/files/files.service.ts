@@ -21,14 +21,14 @@ export class FilesService {
             if (photo && typeof photo === "string" && type === "photo") {
                 const splitPhoto = photo.split(".");
                 fileName = splitPhoto.slice(0, splitPhoto.length - 1) + `.${resolution.at(-1)}`;
-                const filePath = path.resolve(__dirname, "..", "..", "..", "static", "photo", photo);
+                const filePath = path.resolve(__dirname, "..", "..", "..", "..", "static", "photo", photo);
                 if (fs.existsSync(filePath)) {
                     fs.rmSync(filePath);
                 }
             } else {
                 fileName = uuidv4() + `.${resolution.at(-1)}`; 
             }
-            const filePath = path.resolve(__dirname, "..", "..", "..", "static", type); 
+            const filePath = path.resolve(__dirname, "..", "..", "..", "..", "static", type); 
             if (!fs.existsSync(filePath)) {
                 fs.mkdirSync(filePath, {recursive: true}); 
             }

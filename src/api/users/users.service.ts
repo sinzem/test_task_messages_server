@@ -134,7 +134,7 @@ export class UsersService {
         const payload = await this.getPayload(req);
         const userFromDb = await this.getUserById(verifiedId);
         if (userFromDb.photo) {
-            const filePath = path.resolve(__dirname, "..", "..", 'static', userFromDb.photo);
+            const filePath = path.resolve(__dirname, "..", "..", "..", "..", 'static', userFromDb.photo);
             if (fs.existsSync(filePath)) {
                 fs.rmSync(filePath);
             }
@@ -173,7 +173,7 @@ export class UsersService {
         const payload = await this.getPayload(req);
         const userFromDb = await this.getUserById(payload.id);
         if (userFromDb && userFromDb.photo) {
-            const filePath = path.resolve(__dirname, "..", "..", "..", "static", "photo", userFromDb.photo);
+            const filePath = path.resolve(__dirname, "..", "..", "..", "..", "static", "photo", userFromDb.photo);
             if (fs.existsSync(filePath)) {
                 fs.rmSync(filePath);
             }

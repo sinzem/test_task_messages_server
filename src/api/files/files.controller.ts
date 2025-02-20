@@ -15,7 +15,7 @@ export class FilesController {
         @Param('filename') filename: string, 
         @Res() res: Response
     ) {
-        const filePath = join(__dirname, "..", "..", "..", "static", "photo", filename);
+        const filePath = join(__dirname, "..", "..", "..", "..", "static", "photo", filename);
         if (!fs.existsSync(filePath)) {
             throw new NotFoundException({message: "File is not found"});
         }
@@ -30,7 +30,7 @@ export class FilesController {
         @Param('filename') filename: string, 
         @Res() res: Response
     ) {
-        const filePath = join(__dirname, "..", "..", "..", "static", "images", filename);
+        const filePath = join(__dirname, "..", "..", "..", "..", "static", "images", filename);
         if (!fs.existsSync(filePath)) {
             throw new NotFoundException({message: "File is not found"});
         }
@@ -45,7 +45,7 @@ export class FilesController {
         @Param('filename') filename: string, 
         @Res() res: Response
     ) {
-        const filePath = join(__dirname, "..", "..", "..", "static", "text", filename);
+        const filePath = join(__dirname, "..", "..", "..", "..", "static", "text", filename);
         if (!fs.existsSync(filePath)) {
             throw new NotFoundException({message: "File is not found"});
         }

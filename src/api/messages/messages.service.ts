@@ -101,7 +101,7 @@ export class MessagesService {
         while (allTexstsPaths.length) {
             const currentText = allTexstsPaths.pop();
             if (currentText) {
-                const filePath = path.resolve(__dirname, "..", "..", "..", 'static', "text", currentText);
+                const filePath = path.resolve(__dirname, "..", "..", "..", "..", 'static', "text", currentText);
                 if (fs.existsSync(filePath)) {
                     fs.rmSync(filePath);
                 };
@@ -110,7 +110,7 @@ export class MessagesService {
         while (allImagePaths.length) {
             const currentImage = allImagePaths.pop();
             if (currentImage) {
-                const filePath = path.resolve(__dirname, "..", "..", "..", 'static', "images", currentImage);
+                const filePath = path.resolve(__dirname, "..", "..", "..", "..", 'static', "images", currentImage);
                 if (fs.existsSync(filePath)) {
                     fs.rmSync(filePath);
                 };
