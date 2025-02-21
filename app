@@ -1,4 +1,8 @@
-# настройки nginx, по пути etc/nginx/sites-enabled, создаем документ с названием app
+# настройки nginx, по пути etc/nginx/sites-enabled, 
+# если сертификат SSL уже подключен, настройки нужно внести в документ default
+
+# если сертификат подключаем через CertBot
+# создаем документ с названием app
 # добавить  зависимость в документе etc/nginx/nginx.conf  
 #           в строке    include /etc/nginx/sites-enabled/ *;
 #           заменить на include /etc/nginx/sites-enabled/app;  
